@@ -48,8 +48,12 @@ type WorkspaceBlock = {
 
 export default function BlocksToPython() {
   const [workspaceBlocks, setWorkspaceBlocks] = useState<WorkspaceBlock[]>([]);
+  const [inMeeting, setInMeeting] = useState(false);
+  const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
 
   const addBlock = (def: BlockDef) => {
+    if (!inMeeting) return;
     setWorkspaceBlocks([...workspaceBlocks, { 
       instanceId: Math.random().toString(), 
       defId: def.id, 
@@ -70,7 +74,52 @@ export default function BlocksToPython() {
     setWorkspaceBlocks(blocks => blocks.filter(b => b.instanceId !== instanceId));
   };
 
-  const clearWorkspace = () => setWorkspaceBlocks([]);
+  const clearWorkspace = () => {
+    setWorkspaceBlocks([]);
+    setConsoleOutput([]);
+  };
+
+  const handleRunCode = () => {
+    if (!inMeeting) {
+      setConsoleOutput(['> Error: Access denied. Please join the classroom meeting to execute code.']);
+      return;
+    }
+
+    setIsRunning(true);
+    setConsoleOutput(['> Executing...']);
+    
+    setTimeout(() => {
+      const lines = pythonOutput.split('\n');
+      const outputs: string[] = [];
+      const variables: Record<string, string | number> = {};
+
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('print(')) {
+          const content = trimmed.substring(6, trimmed.length - 1);
+          if (content.startsWith('"') || content.startsWith("'")) {
+            outputs.push(content.replace(/['"]/g, ''));
+          } else if (variables[content] !== undefined) {
+             outputs.push(String(variables[content]));
+          } else {
+             outputs.push(content);
+          }
+        } else if (trimmed.includes('=') && !trimmed.includes('==') && !trimmed.includes('for') && !trimmed.includes('if')) {
+           const parts = trimmed.split('=');
+           if (parts.length === 2 && !trimmed.includes('+=')) {
+              let val = parts[1].trim();
+              variables[parts[0].trim()] = val;
+           }
+        }
+      });
+
+      if (outputs.length === 0) {
+        outputs.push('> Program ran successfully with no output.');
+      }
+      setConsoleOutput(outputs);
+      setIsRunning(false);
+    }, 600);
+  };
 
   const pythonOutput = workspaceBlocks.map(b => b.template(b.value)).join('\n');
 
@@ -86,13 +135,44 @@ export default function BlocksToPython() {
     }
   };
 
+  if (!inMeeting) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-8 w-full max-w-4xl mx-auto text-center gap-6">
+        <div className="w-24 h-24 bg-cc-surface-lowest rounded-full flex items-center justify-center shadow-xl border border-cc-primary/20 mb-4 text-4xl">
+          🔒
+        </div>
+        <h1 className="text-5xl font-extrabold text-cc-secondary tracking-tight">Blocks Lab Locked</h1>
+        <p className="text-xl text-gray-500 font-medium max-w-2xl">
+          This playground is designed for interactive learning. You need to be in an active meeting with your teacher to drag, drop, and execute code blocks.
+        </p>
+        <button 
+          onClick={() => setInMeeting(true)}
+          className="mt-8 px-12 py-5 bg-gradient-to-r from-cc-primary to-[#ff8c7a] text-white font-extrabold rounded-full text-xl shadow-[0_8px_32px_rgba(255,107,74,0.3)] hover:-translate-y-1 transition-transform"
+        >
+          Join Teacher&apos;s Classroom
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 flex flex-col p-8 max-w-7xl mx-auto w-full gap-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-4xl font-bold text-cc-secondary tracking-tight">Blocks to Python Sandbox</h1>
-        <div className="flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full font-bold text-sm">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          Teacher Sync Active
+        <div className="flex flex-col">
+          <h1 className="text-4xl font-bold text-cc-secondary tracking-tight">Blocks to Python Sandbox</h1>
+          <p className="text-gray-500 font-medium mt-1">Drag and drop blocks to write code visually.</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => setInMeeting(false)}
+            className="text-sm font-bold text-gray-500 hover:text-red-500 border border-gray-200 px-4 py-2 rounded-full transition-colors"
+          >
+            Leave Meeting
+          </button>
+          <div className="flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full font-bold text-sm">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            Teacher Sync Active
+          </div>
         </div>
       </div>
       
@@ -155,8 +235,12 @@ export default function BlocksToPython() {
         <div className="w-1/2 flex flex-col gap-4 bg-[#1e293b] p-6 rounded-3xl shadow-xl border-4 border-cc-surface-lowest">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-white">Python Output</h2>
-            <button className="px-4 py-2 rounded-full font-bold text-sm bg-gradient-to-r from-cc-primary to-[#ff8c7a] text-white">
-              ▶ Run Code
+            <button 
+              onClick={handleRunCode}
+              disabled={isRunning || workspaceBlocks.length === 0}
+              className="px-6 py-2 rounded-full font-bold text-sm bg-gradient-to-r from-cc-primary to-[#ff8c7a] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity flex items-center gap-2"
+            >
+              {isRunning ? 'Running...' : '▶ Run Code'}
             </button>
           </div>
           
@@ -166,8 +250,12 @@ export default function BlocksToPython() {
 
           <div className="h-48 rounded-2xl bg-black/50 p-4 border-t border-gray-700 mt-4 flex flex-col">
             <span className="text-gray-400 font-mono text-xs uppercase tracking-wider mb-2">Console Output</span>
-            <div className="font-mono text-gray-300 flex-1">
-              {workspaceBlocks.length > 0 ? "&gt; Waiting for execution..." : ""}
+            <div className="font-mono text-gray-200 flex-1 overflow-y-auto break-all">
+              {consoleOutput.length === 0 ? (
+                <span className="opacity-50">&gt; Waiting for execution...</span>
+              ) : (
+                consoleOutput.map((l, i) => <div key={i}>{l}</div>)
+              )}
             </div>
           </div>
         </div>
