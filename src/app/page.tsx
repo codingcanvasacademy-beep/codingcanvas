@@ -13,14 +13,7 @@ export default function Home() {
     setShowModal(false);
     setPhone("");
   };
-  const handleBook = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!phone) return;
-    const text = encodeURIComponent("Hi, I want to book a free trial class on CodingCanvas!");
-    window.open(`https://wa.me/${phone}?text=${text}`, "_blank");
-    setShowModal(false);
-    setPhone("");
-  };
+
   return (
     <div className="flex flex-col items-center justify-center flex-1 text-center p-8">
       <div className="max-w-4xl mx-auto space-y-8">
