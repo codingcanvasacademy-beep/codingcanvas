@@ -1,66 +1,65 @@
-# Roadmap Template
-
-Template for `.gsd/ROADMAP.md` — phase structure and progress tracking.
-
 ---
-
-## File Template
-
-```markdown
----
-milestone: {name}
-version: {semantic version}
-updated: [ISO timestamp]
+milestone: CodingCanvas Launch
+version: 1.0.0
+updated: 2026-04-11
 ---
 
 # Roadmap
 
-> **Current Phase:** {N} - {name}
-> **Status:** {planning | executing | verifying}
+> **Current Phase:** 4 - UI Polish & Launch
+> **Status:** planning
 
 ## Must-Haves (from SPEC)
 
-- [ ] {Must-have 1}
-- [ ] {Must-have 2}
-- [ ] {Must-have 3}
+- [x] Google Blockly integration
+- [x] Pyodide Python execution
+- [x] Gemma-powered AI Block Creator
+- [x] Global AI Support Chat
+- [ ] Premium Stitch UI Implementation
+- [ ] Secure Production Deployment
 
 ---
 
 ## Phases
 
-### Phase 1: {Foundation}
-**Status:** ⬜ Not Started | 🔄 In Progress | ✅ Complete
-**Objective:** {What this phase delivers}
-**Requirements:** REQ-01, REQ-02
+### Phase 1: Foundation
+**Status:** ✅ Complete
+**Objective:** Set up Next.js project, navigation, and landing page structure.
 
 **Plans:**
-- [ ] Plan 1.1: {name}
-- [ ] Plan 1.2: {name}
+- [x] Plan 1.1: Project initialization
+- [x] Plan 1.2: Basic navigation and branding
 
 ---
 
-### Phase 2: {Core Feature}
-**Status:** ⬜ Not Started
-**Objective:** {What this phase delivers}
-**Depends on:** Phase 1
+### Phase 2: AI Core
+**Status:** ✅ Complete
+**Objective:** Integrate Google Generative AI (Gemma) for chat and block generation.
 
 **Plans:**
-- [ ] Plan 2.1: {name}
-- [ ] Plan 2.2: {name}
+- [x] Plan 2.1: API Route for AI
+- [x] Plan 2.2: AISupportChat widget
 
 ---
 
-### Phase 3: {Integration}
-**Status:** ⬜ Not Started
-**Objective:** {What this phase delivers}
-**Depends on:** Phase 2
+### Phase 3: Block Engine
+**Status:** ✅ Complete
+**Objective:** Replace simulated runner with Google Blockly and Pyodide.
+
+**Plans:**
+- [x] Plan 3.1: Blockly Workspace integration
+- [x] Plan 3.2: Pyodide WASM runner
 
 ---
 
-### Phase 4: {Polish/Launch}
-**Status:** ⬜ Not Started
-**Objective:** {Final touches and deployment}
-**Depends on:** Phase 3
+### Phase 4: UI Polish & Launch
+**Status:** 🔄 In Progress
+**Objective:** Implement premium Stitch design tokens and finalize production readiness.
+
+**Plans:**
+- [ ] Plan 4.1: Apply Stitch Design (colors, fonts, blobs)
+- [ ] Plan 4.2: Final mobile responsiveness check
+- [ ] Plan 4.3: Environment variable audit and final Vercel sync
 
 ---
 
@@ -68,10 +67,10 @@ updated: [ISO timestamp]
 
 | Phase | Status | Plans | Complete |
 |-------|--------|-------|----------|
-| 1 | ⬜ | 0/2 | — |
-| 2 | ⬜ | 0/2 | — |
-| 3 | ⬜ | 0/1 | — |
-| 4 | ⬜ | 0/1 | — |
+| 1 | ✅ | 2/2 | 100% |
+| 2 | ✅ | 2/2 | 100% |
+| 3 | ✅ | 2/2 | 100% |
+| 4 | 🔄 | 0/3 | 0% |
 
 ---
 
@@ -79,25 +78,7 @@ updated: [ISO timestamp]
 
 | Phase | Started | Completed | Duration |
 |-------|---------|-----------|----------|
-| 1 | — | — | — |
-| 2 | — | — | — |
-| 3 | — | — | — |
-| 4 | — | — | — |
-```
-
----
-
-## Status Icons
-
-- ⬜ Not Started
-- 🔄 In Progress
-- ✅ Complete
-- ⏸️ Paused
-- ❌ Blocked
-
-## Guidelines
-
-- 3-5 phases per milestone
-- Each phase has clear deliverable
-- Dependencies flow forward
-- Update status as work progresses
+| 1 | 2026-04-09 | 2026-04-09 | 1 day |
+| 2 | 2026-04-10 | 2026-04-10 | 1 day |
+| 3 | 2026-04-10 | 2026-04-11 | 1 day |
+| 4 | 2026-04-11 | — | — |
