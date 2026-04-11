@@ -1,14 +1,39 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 export default function TeacherPortal() {
+  const router = useRouter();
+  const [roomId, setRoomId] = useState("");
+
+  const handleLaunchMeeting = (overrideRoom?: string) => {
+    const targetRoom = overrideRoom || roomId;
+    if (!targetRoom) return;
+    router.push(`/meeting?room=${targetRoom}&name=Instructor_Sarah`);
+  };
+
   return (
     <div className="flex-1 p-8 max-w-7xl mx-auto w-full gap-8 flex flex-col">
-      <div className="flex justify-between items-center bg-cc-surface-highest p-8 rounded-[3rem] shadow-[0_4px_32px_rgba(22,29,31,0.06)]">
+      <div className="flex justify-between items-center bg-cc-surface-highest p-8 rounded-[3rem] shadow-[0_4px_32px_rgba(22,29,31,0.06)] flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-bold text-cc-secondary tracking-tight">Good morning, Instructor Sarah</h1>
           <p className="text-[#5a403c] mt-2">You have 3 live sessions scheduled for today.</p>
         </div>
-        <button className="px-8 py-4 rounded-full font-bold text-white bg-gradient-to-tr from-cc-primary to-[#ff8c7a] hover:brightness-110 shadow-lg shadow-cc-primary/20 transition-all">
-          Launch Live Classroom
-        </button>
+        <div className="flex gap-2">
+          <input 
+            type="text" 
+            placeholder="Room ID..." 
+            value={roomId}
+            onChange={(e) => setRoomId(e.target.value)}
+            className="px-4 py-3 rounded-full border border-gray-200 focus:border-cc-primary focus:outline-none"
+          />
+          <button 
+            onClick={() => handleLaunchMeeting()}
+            disabled={!roomId}
+            className="disabled:opacity-50 px-8 py-4 rounded-full font-bold text-white bg-gradient-to-tr from-cc-primary to-[#ff8c7a] hover:brightness-110 shadow-lg shadow-cc-primary/20 transition-all">
+            Launch Live Classroom
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -49,7 +74,9 @@ export default function TeacherPortal() {
                   <div className="font-bold text-lg text-cc-secondary">{session.title}</div>
                 </div>
                 {session.status === 'next' && (
-                   <button className="px-6 py-2 rounded-full font-bold text-white bg-cc-primary text-sm transition-transform hover:-translate-y-1">
+                   <button 
+                     onClick={() => handleLaunchMeeting(session.title.replace(/[^a-zA-Z0-9]/g, '_'))}
+                     className="px-6 py-2 rounded-full font-bold text-white bg-cc-primary text-sm transition-transform hover:-translate-y-1">
                      Start
                    </button>
                 )}

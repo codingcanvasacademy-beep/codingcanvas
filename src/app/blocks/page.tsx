@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 
 declare global {
   interface Window {
@@ -147,14 +148,15 @@ function BlocksLabInner() {
       zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 },
       trashcan: true,
       theme: {
-        fontStyle: { family: "Plus Jakarta Sans, sans-serif", size: 11, weight: "bold" },
+        fontStyle: { family: "var(--font-outfit), sans-serif", size: 12, weight: "bold" },
         componentStyles: {
-          workspaceBackgroundColour: "#fafafa",
-          toolboxBackgroundColour: "#1a2235",
+          workspaceBackgroundColour: "#ffffff",
+          toolboxBackgroundColour: "#111827",
           toolboxForegroundColour: "#ffffff",
-          flyoutBackgroundColour: "#253047",
+          flyoutBackgroundColour: "#1F2937",
           flyoutForegroundColour: "#ffffff",
-          scrollbarColour: "#FF6B4A",
+          scrollbarColour: "var(--brand-crimson)",
+          scrollbarOpacity: 0.1,
         },
       },
     });
@@ -265,36 +267,48 @@ function BlocksLabInner() {
   // Lock Screen
   if (!inMeeting) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 w-full text-center gap-6 bg-gradient-to-br from-orange-50 via-white to-purple-50">
-        <div className="relative">
-          <div className="w-32 h-32 bg-gradient-to-br from-cc-primary to-purple-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-orange-200 text-6xl rotate-3">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 w-full text-center gap-10 bg-white relative overflow-hidden">
+        <div className="cc-blob cc-blob-pink top-[-200px] left-[-200px] opacity-[0.1]"></div>
+        <div className="cc-blob cc-blob-coral bottom-[-200px] right-[-100px] opacity-[0.05]"></div>
+        
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="relative"
+        >
+          <div className="w-40 h-40 bg-cc-primary rounded-[40px] flex items-center justify-center shadow-2xl shadow-cc-primary/20 text-6xl rotate-3 relative z-10">
             🧩
           </div>
-          <div className="absolute -top-3 -right-3 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-2xl shadow-lg">
+          <div className="absolute -top-4 -right-4 w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-3xl shadow-lg z-20 animate-bounce">
             ✨
           </div>
-        </div>
-        <div>
-          <h1 className="text-6xl font-extrabold text-cc-secondary tracking-tight">Blocks Lab</h1>
-          <p className="text-xl text-gray-500 font-medium max-w-2xl mt-3">
+        </motion.div>
+        
+        <div className="space-y-4 relative z-10">
+          <h1 className="text-6xl md:text-7xl font-black text-foreground tracking-tight">Blocks Lab</h1>
+          <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
             Drag, snap, and build real Python code — just like Scratch. Powered by Google Blockly + Pyodide.
           </p>
         </div>
-        <div className="flex gap-4 mt-4">
+
+        <div className="flex flex-col sm:flex-row gap-6 mt-4 relative z-10">
           <button
             onClick={() => { setInMeeting(true); setIsTeacher(false); }}
-            className="px-10 py-4 bg-gradient-to-r from-cc-primary to-[#ff8c7a] text-white font-extrabold rounded-2xl text-lg shadow-[0_8px_32px_rgba(255,107,74,0.35)] hover:-translate-y-1 transition-transform"
+            className="px-12 py-5 bg-cc-primary text-white font-black rounded-3xl text-xl shadow-xl shadow-cc-primary/30 hover:-translate-y-1 transition-all active:scale-95"
           >
             👧 Join as Student
           </button>
           <button
             onClick={() => { setInMeeting(true); setIsTeacher(true); }}
-            className="px-10 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-extrabold rounded-2xl text-lg shadow-[0_8px_32px_rgba(99,102,241,0.3)] hover:-translate-y-1 transition-transform"
+            className="px-12 py-5 bg-gray-900 text-white font-black rounded-3xl text-xl shadow-xl shadow-gray-200 hover:-translate-y-1 transition-all active:scale-95"
           >
             👩‍🏫 Join as Teacher
           </button>
         </div>
-        <p className="text-gray-400 text-sm font-medium mt-2">Real Python execution powered by Pyodide • Visual coding powered by Google Blockly</p>
+        
+        <p className="text-gray-400 text-sm font-bold mt-8 uppercase tracking-widest relative z-10">
+          WASM PYTHON • GOOGLE BLOCKLY • CLOUD SYNC
+        </p>
       </div>
     );
   }

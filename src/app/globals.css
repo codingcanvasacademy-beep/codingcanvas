@@ -1,28 +1,55 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4fafd;
-  --foreground: #161d1f;
+  --background: #ffffff;
+  --foreground: #101828;
+  --brand-crimson: #D81E5B;
+  --brand-pink-light: #FCE7F3;
+  --brand-coral: #F87171;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-jakarta);
+  --font-sans: var(--font-outfit);
   
-  --color-cc-primary: #FF5A43;
-  --color-cc-primary-container: #ffdad4;
-  --color-cc-secondary: #006492;
-  --color-cc-secondary-container: #cae6ff;
-  --color-cc-tertiary: #8135c5;
-  --color-cc-tertiary-container: #f0dbff;
-  --color-cc-surface: #f4fafd;
-  --color-cc-surface-low: #eef5f7;
-  --color-cc-surface-lowest: #ffffff;
+  --color-cc-primary: var(--brand-crimson);
+  --color-cc-primary-light: var(--brand-pink-light);
+  --color-cc-secondary: var(--brand-coral);
+  --color-cc-surface: #ffffff;
+  --color-cc-surface-muted: #F9FAFB;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), sans-serif;
+  font-family: var(--font-sans), system-ui;
+  overflow-x: hidden;
+}
+
+/* Background Decoration Blobs */
+.cc-blob {
+  position: absolute;
+  filter: blur(80px);
+  z-index: -1;
+  opacity: 0.2;
+  border-radius: 50%;
+}
+
+.cc-blob-pink {
+  background: var(--brand-crimson);
+  width: 500px;
+  height: 500px;
+}
+
+.cc-blob-coral {
+  background: var(--brand-coral);
+  width: 400px;
+  height: 400px;
+}
+
+.cc-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }

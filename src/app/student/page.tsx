@@ -1,9 +1,16 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function StudentPortal() {
-  const [inMeeting, setInMeeting] = useState(false);
+  const [meetingId, setMeetingId] = useState("");
+  const router = useRouter();
+
+  const handleJoinMeeting = () => {
+    if (!meetingId) return;
+    router.push(`/meeting?room=${meetingId}&name=Student`);
+  };
 
   return (
     <div className="flex-1 p-8 max-w-7xl mx-auto w-full gap-8 flex flex-col">
@@ -22,20 +29,12 @@ export default function StudentPortal() {
             <h2 className="text-2xl font-bold text-cc-secondary">Jump into Code</h2>
             <p className="text-gray-600 max-w-md">Continue where you left off or start a brand new Python adventure in the Glass Lab!</p>
             <div className="flex gap-4 pt-4">
-              {inMeeting ? (
-                <>
-                  <Link href="/student/compiler" className="inline-block px-8 py-4 rounded-full font-bold text-white bg-gradient-to-tr from-cc-primary to-[#ff8c7a] hover:brightness-110 shadow-xl shadow-cc-primary/20 transition-transform hover:-translate-y-1">
-                    Open Python Compiler
-                  </Link>
-                  <Link href="/blocks" className="inline-block px-8 py-4 rounded-full font-bold text-cc-secondary bg-white border border-[#e3beb8]/40 hover:bg-cc-surface-low transition-all">
-                    Practice Blocks
-                  </Link>
-                </>
-              ) : (
-                <div className="flex items-center gap-2 px-8 py-4 rounded-full font-bold text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed">
-                  <span>🔒 Compiler locked (Join a meeting to unlock)</span>
-                </div>
-              )}
+              <Link href="/student/compiler" className="inline-block px-8 py-4 rounded-full font-bold text-white bg-gradient-to-tr from-cc-primary to-[#ff8c7a] hover:brightness-110 shadow-xl shadow-cc-primary/20 transition-transform hover:-translate-y-1">
+                Open Python Compiler
+              </Link>
+              <Link href="/blocks" className="inline-block px-8 py-4 rounded-full font-bold text-cc-secondary bg-white border border-[#e3beb8]/40 hover:bg-cc-surface-low transition-all">
+                Practice Blocks
+              </Link>
             </div>
           </div>
           <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-cc-primary-container rounded-full opacity-30 blur-3xl pointer-events-none"></div>
@@ -43,17 +42,23 @@ export default function StudentPortal() {
 
         {/* Next Class */}
         <div className="bg-cc-surface-lowest rounded-[3rem] p-8 shadow-[0_4px_32px_rgba(22,29,31,0.04)] border border-[#e3beb8]/20 flex flex-col gap-4">
-          <h2 className="text-xl font-bold text-cc-secondary">Next Live Class</h2>
+          <h2 className="text-xl font-bold text-cc-secondary">Live Classes</h2>
           <div className="bg-cc-surface-low rounded-2xl p-6 border-l-4 border-cc-primary flex flex-col gap-2">
-            <span className="text-sm font-bold text-cc-primary uppercase tracking-wider">Today, 4:00 PM</span>
-            <span className="font-bold text-lg text-cc-secondary">Intro to Loops & Turtles</span>
-            <span className="text-sm text-gray-500">Instructor: Ms. Sarah</span>
+            <span className="font-bold text-lg text-cc-secondary">Join via Meeting ID</span>
+            <input 
+              type="text"
+              placeholder="e.g. 123456"
+              value={meetingId}
+              onChange={(e) => setMeetingId(e.target.value)}
+              className="px-4 py-2 mt-2 rounded-lg border border-[#e3beb8]/40 focus:border-cc-primary focus:outline-none"
+            />
           </div>
           <button 
-            onClick={() => setInMeeting(!inMeeting)}
-            className={`w-full mt-auto py-3 rounded-full font-bold text-white transition-colors ${inMeeting ? 'bg-red-500 hover:bg-red-700' : 'bg-[#006492] hover:bg-[#004a6d]'}`}
+            onClick={handleJoinMeeting}
+            disabled={!meetingId}
+            className={`w-full mt-auto py-3 rounded-full font-bold text-white transition-colors ${!meetingId ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#006492] hover:bg-[#004a6d]'}`}
           >
-            {inMeeting ? 'Leave Classroom' : 'Join Classroom'}
+            Join Virtual Classroom
           </button>
         </div>
       </div>

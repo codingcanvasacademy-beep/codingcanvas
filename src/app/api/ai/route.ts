@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     let systemInstruction = "";
-    let userPrompt = prompt;
+    const userPrompt = prompt;
 
     if (mode === "block_generator") {
       systemInstruction = `You are a Python coding expert helping a teacher create custom code blocks for a kids' visual programming sandbox.
@@ -34,6 +34,13 @@ Your role is to:
 4. Be warm, encouraging, and patient
 Keep responses concise (2-3 sentences max) and friendly. Never be technical unless asked.
 Platform info: CodingCanvas teaches kids Python through visual blocks (Scratch-like) and then transitions to real code. Classes are live online with a teacher. First class is free.`;
+    } else if (mode === "password_judge") {
+      systemInstruction = `You are a strict cybersecurity expert who evaluates password strength.
+You must respond with ONLY a valid JSON object (no markdown) in this exact format:
+{
+  "strength": "WEAK" | "MEDIUM" | "STRONG",
+  "feedback": "Snappy, 1-sentence feedback explaining why it's weak/medium/strong (e.g., 'Too short!', 'Good mix of characters, but add a number.')"
+}`;
     }
 
     const chat = model.startChat({

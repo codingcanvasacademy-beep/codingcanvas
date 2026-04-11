@@ -7,26 +7,24 @@ export default function Navigation() {
   const pathname = usePathname();
   
   return (
-    <nav className="flex justify-between items-center p-6 bg-cc-surface-lowest shadow-[0_4px_32px_rgba(22,29,31,0.06)] sticky top-0 z-50">
-      <div className="flex items-center gap-2">
-        <Image src="/logo.png" alt="CodingCanvas Logo" width={44} height={44} className="rounded-xl" />
-        <span className="font-bold text-2xl text-cc-secondary tracking-tight">CodingCanvas</span>
-      </div>
+    <nav className="flex justify-between items-center px-8 py-5 bg-white border-b border-gray-100 sticky top-0 z-[80] backdrop-blur-md bg-white/80">
+      <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+        <Image src="/logo.png" alt="CodingCanvas Logo" width={36} height={36} className="rounded-lg" />
+        <span className="font-black text-2xl tracking-tighter text-foreground">CodingCanvas</span>
+      </Link>
       
-      <div className="flex gap-8 items-center font-medium text-lg">
-        <Link href="/" className={`hover:text-cc-primary transition-colors ${pathname === '/' ? 'text-cc-primary' : 'text-cc-secondary'}`}>Home</Link>
-        <Link href="/blocks" className={`hover:text-cc-primary transition-colors ${pathname === '/blocks' ? 'text-cc-primary' : 'text-cc-secondary'}`}>Blocks to Python</Link>
-        <Link href="/student" className={`hover:text-cc-primary transition-colors ${pathname.includes('/student') ? 'text-cc-primary' : 'text-cc-secondary'}`}>Student</Link>
-        <Link href="/teacher" className={`hover:text-cc-primary transition-colors ${pathname.includes('/teacher') ? 'text-cc-primary' : 'text-cc-secondary'}`}>Teacher</Link>
+      <div className="hidden md:flex gap-10 items-center font-bold text-gray-500">
+        <Link href="/" className={`hover:text-cc-primary transition-colors ${pathname === '/' ? 'text-cc-primary' : ''}`}>Home</Link>
+        <Link href="/admin" className={`hover:text-cc-primary transition-colors ${pathname.includes('/admin') ? 'text-cc-primary' : ''}`}>Main Host Portal (Admin)</Link>
       </div>
 
-      <div className="flex gap-4">
-        <Link href="/login" className="px-6 py-2 rounded-full font-bold text-cc-secondary bg-cc-surface-low hover:bg-cc-surface transition-colors flex items-center justify-center">
+      <div className="flex gap-4 items-center">
+        <Link href="/login" className="hidden sm:block font-bold text-gray-400 hover:text-foreground transition-colors mr-2">
           Log In
         </Link>
-        <button className="px-6 py-2 rounded-full font-bold text-white bg-gradient-to-tr from-cc-primary to-[#ff8c7a] hover:brightness-110 shadow-lg shadow-cc-primary/30 transition-all">
+        <Link href="/#book" className="px-6 py-3 rounded-full font-bold text-white bg-cc-primary hover:bg-cc-primary/90 shadow-lg shadow-cc-primary/20 transition-all text-sm md:text-base text-center inline-block">
           Book Free Class
-        </button>
+        </Link>
       </div>
     </nav>
   );

@@ -8,7 +8,7 @@ export default function StudentCompiler() {
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               Live Sync Active
            </div>
-           <button className="bg-white px-4 py-1.5 rounded-full text-sm font-bold text-[#006492] shadow-sm border border-[#e3beb8]/30">
+           <button onClick={() => alert('Assignment submitted correctly! Instructor has been notified.')} className="bg-white px-4 py-1.5 rounded-full text-sm font-bold text-[#006492] shadow-sm border border-[#e3beb8]/30">
              Submit Assignment
            </button>
         </div>
@@ -19,14 +19,14 @@ export default function StudentCompiler() {
         <div className="flex-1 bg-white/80 backdrop-blur-xl rounded-[2rem] border border-[#e3beb8]/30 shadow-lg flex flex-col overflow-hidden">
           <div className="bg-[#f0f5f8] px-6 py-3 border-b border-[#e3beb8]/20 flex justify-between items-center">
             <span className="font-bold text-[#5a403c] text-sm font-mono">main.py</span>
-            <button className="bg-gradient-to-r from-cc-primary to-[#ff8c7a] px-5 py-1.5 rounded-full text-white font-bold text-sm shadow-md hover:brightness-110">
+            <button onClick={() => alert('Code execution queued on server. Allocating secure container...')} className="bg-gradient-to-r from-cc-primary to-[#ff8c7a] px-5 py-1.5 rounded-full text-white font-bold text-sm shadow-md hover:brightness-110">
               ▶ Run Code
             </button>
           </div>
           <div className="flex-1 p-6 font-mono text-lg bg-[#161d1f] text-[#f4fafd]">
             <div className="flex">
               <div className="w-8 text-gray-600 text-right pr-4 select-none">1</div>
-              <div className="text-pink-400">print<span className="text-gray-300">(</span><span className="text-yellow-300">"Hello from Glass Lab!"</span><span className="text-gray-300">)</span></div>
+              <div className="text-pink-400">print<span className="text-gray-300">(</span><span className="text-yellow-300">&quot;Hello from Glass Lab!&quot;</span><span className="text-gray-300">)</span></div>
             </div>
             <div className="flex">
               <div className="w-8 text-gray-600 text-right pr-4 select-none">2</div>
