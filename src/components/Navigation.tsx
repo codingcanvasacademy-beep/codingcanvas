@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function Navigation() {
@@ -8,9 +9,7 @@ export default function Navigation() {
   return (
     <nav className="flex justify-between items-center p-6 bg-cc-surface-lowest shadow-[0_4px_32px_rgba(22,29,31,0.06)] sticky top-0 z-50">
       <div className="flex items-center gap-2">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cc-primary to-[#ff8c7a] flex items-center justify-center text-white font-bold text-xl">
-          C
-        </div>
+        <Image src="/logo.png" alt="CodingCanvas Logo" width={44} height={44} className="rounded-xl" />
         <span className="font-bold text-2xl text-cc-secondary tracking-tight">CodingCanvas</span>
       </div>
       
