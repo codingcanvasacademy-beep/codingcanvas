@@ -6,16 +6,22 @@ import { createClient } from "@/utils/supabase/client";
 type Teacher = { id: string; role: string; created_at: string; email: string };
 type Invite = { email: string; created_at: string };
 type ClassRequest = { id: string; parent_name: string; child_name: string; email: string; phone: string; status: string; created_at: string };
+type Faq = { id: string; question: string; answer: string; created_at: string };
 
 export default function AdminPortal() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [requests, setRequests] = useState<ClassRequest[]>([]);
+  const [faqs, setFaqs] = useState<Faq[]>([]);
   
   const [inviteEmail, setInviteEmail] = useState("");
   const [isInjecting, setIsInjecting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  const [newQ, setNewQ] = useState("");
+  const [newA, setNewA] = useState("");
+  const [isAddingFaq, setIsAddingFaq] = useState(false);
 
   const router = useRouter();
   const supabase = createClient();
@@ -35,6 +41,13 @@ export default function AdminPortal() {
       .select("*")
       .order("created_at", { ascending: false });
     setRequests(requestData || []);
+
+    // 4. Fetch AI FAQs
+    const { data: faqData } = await supabase
+      .from("ai_faqs")
+      .select("*")
+      .order("created_at", { ascending: true });
+    setFaqs(faqData || []);
   }, [supabase]);
 
   useEffect(() => {
@@ -110,6 +123,26 @@ export default function AdminPortal() {
   const handleHostClass = async (requestId: string) => {
     await supabase.from("free_class_requests").update({ status: "contacted" }).eq("id", requestId);
     router.push(`/meeting?room=${requestId}&name=Head_Admin`);
+  };
+
+  const handleAddFaq = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newQ.trim() || !newA.trim()) return;
+    setIsAddingFaq(true);
+    const { error } = await supabase.from("ai_faqs").insert([{ question: newQ.trim(), answer: newA.trim() }]);
+    setIsAddingFaq(false);
+    if (error) {
+      alert("Failed to add FAQ: " + error.message);
+    } else {
+      setNewQ("");
+      setNewA("");
+      loadDashboardData();
+    }
+  };
+
+  const handleDeleteFaq = async (id: string) => {
+    const { error } = await supabase.from("ai_faqs").delete().eq("id", id);
+    if (!error) loadDashboardData();
   };
 
   if (isAdmin === null) {
@@ -308,6 +341,57 @@ export default function AdminPortal() {
               </div>
             )}
           </div>
+
+          {/* AI Knowledge Settings */}
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mt-8">
+            <h2 className="text-2xl font-bold mb-4">Custom AI Knowledge</h2>
+            <p className="text-sm text-gray-500 mb-6">Train the AI Support Chat with expected host-provided Q&A so it knows exactly how to respond using your logic.</p>
+            
+            <form onSubmit={handleAddFaq} className="flex flex-col gap-4 bg-gray-50 p-4 rounded-2xl mb-6 border border-gray-100">
+              <input
+                type="text"
+                required
+                placeholder="Question (e.g. When do spring classes start?)"
+                value={newQ}
+                onChange={(e) => setNewQ(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-cc-primary focus:outline-none transition-colors text-sm"
+              />
+              <textarea
+                required
+                placeholder="Exact Answer from Host (e.g. They begin March 10th!)"
+                value={newA}
+                onChange={(e) => setNewA(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-cc-primary focus:outline-none transition-colors text-sm min-h-[80px]"
+              />
+              <button 
+                type="submit"
+                disabled={isAddingFaq || !newQ || !newA}
+                className="self-end px-6 py-2 rounded-xl font-bold text-white bg-cc-primary hover:brightness-105 transition-all shadow-sm disabled:opacity-50"
+              >
+                {isAddingFaq ? "Injecting..." : "Inject Q&A into AI"}
+              </button>
+            </form>
+
+            {/* List injected FAQs */}
+            {faqs.length > 0 && (
+              <div className="flex flex-col gap-3">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Injections</h3>
+                {faqs.map((faq) => (
+                  <div key={faq.id} className="p-4 bg-white border border-gray-100 shadow-sm rounded-xl relative group">
+                    <p className="text-sm font-bold text-cc-secondary mb-1">Q: {faq.question}</p>
+                    <p className="text-sm text-gray-600">A: {faq.answer}</p>
+                    <button 
+                      onClick={() => handleDeleteFaq(faq.id)}
+                      className="absolute top-4 right-4 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all font-bold text-xs"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
 
       </div>

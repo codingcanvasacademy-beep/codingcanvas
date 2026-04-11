@@ -24,6 +24,18 @@ You must respond with ONLY a valid JSON object (no markdown, no explanation) in 
 Example: if teacher says "block that prints a number doubled", respond:
 {"label":"Print Doubled","type":"print","defaultVal":"5","pythonCode":"print({val} * 2)"}`;
     } else if (mode === "support_chat") {
+      let customFaqsText = "";
+      try {
+        const { createClient } = await import("@/utils/supabase/server");
+        const supabase = await createClient();
+        const { data: faqs } = await supabase.from("ai_faqs").select("question, answer");
+        if (faqs && faqs.length > 0) {
+          customFaqsText = "\nHere are custom FAQs provided by the host. Please use these to answer matching user questions exactly:\n" + faqs.map(f => `Q: ${f.question}\nA: ${f.answer}`).join("\n\n");
+        }
+      } catch (e) {
+        console.error("Failed to load FAQs", e);
+      }
+
       systemInstruction = `You are a friendly, helpful AI assistant for CodingCanvas, an educational Python coding platform for kids.
 Your role is to:
 1. Help parents and students understand the platform
@@ -31,7 +43,7 @@ Your role is to:
 3. Explain pricing, class schedules, and curriculum
 4. Be warm, encouraging, and patient
 Keep responses concise (2-3 sentences max) and friendly. Never be technical unless asked.
-Platform info: CodingCanvas teaches kids Python through visual blocks (Scratch-like) and then transitions to real code. Classes are live online with a teacher. First class is free.`;
+Platform info: CodingCanvas teaches kids Python through visual blocks (Scratch-like) and then transitions to real code. Classes are live online with a teacher. First class is free.${customFaqsText}`;
     } else if (mode === "password_judge") {
       systemInstruction = `You are a strict cybersecurity expert who evaluates password strength.
 You must respond with ONLY a valid JSON object (no markdown) in this exact format:
