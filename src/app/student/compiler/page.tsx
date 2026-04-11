@@ -1,3 +1,5 @@
+"use client";
+
 export default function StudentCompiler() {
   return (
     <div className="flex-1 flex flex-col p-6 h-screen bg-[#f4fafd]">
