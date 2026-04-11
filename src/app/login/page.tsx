@@ -7,7 +7,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
-  const [step, setStep] = useState<"EMAIL" | "OTP" | "PASSWORD_SETUP">("EMAIL");
+  const [step, setStep] = useState<"EMAIL" | "OTP" | "PASSWORD_SETUP" | "PASSWORD_LOGIN">("EMAIL");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   
@@ -98,6 +98,26 @@ export default function LoginPage() {
     }
   };
 
+  const handlePasswordLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) return;
+    
+    setIsLoading(true);
+    setErrorMsg("");
+    
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setIsLoading(false);
+    if (error) {
+      setErrorMsg(error.message);
+    } else {
+      await redirectUserBasedOnRole();
+    }
+  };
+
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.length < 6) return;
@@ -172,6 +192,8 @@ export default function LoginPage() {
             ? "Enter your email address to receive a secure One-Time code." 
             : step === "OTP" 
             ? `We've sent a code to ${email}`
+            : step === "PASSWORD_LOGIN"
+            ? "Welcome back! Please enter your password to sign in."
             : "Lock it down! Optionally set a password to make logging in easier next time."}
         </p>
 
@@ -207,6 +229,65 @@ export default function LoginPage() {
               ) : (
                 "Send Login Code"
               )}
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setStep("PASSWORD_LOGIN")}
+              className="mt-1 text-sm text-gray-500 font-medium hover:text-cc-primary transition-colors py-2"
+              disabled={isLoading}
+            >
+              Already have a password? Sign in here
+            </button>
+          </form>
+        )}
+
+        {step === "PASSWORD_LOGIN" && (
+          <form onSubmit={handlePasswordLogin} className="w-full flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="email" className="text-sm font-bold text-gray-700">Email Address</label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="teacher@codingcanvas.com"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cc-primary focus:outline-none transition-colors"
+                disabled={isLoading}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="login-password" className="text-sm font-bold text-gray-700">Password</label>
+              <input
+                id="login-password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password..."
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cc-primary focus:outline-none transition-colors"
+                disabled={isLoading}
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={isLoading || !email || !password}
+              className="w-full py-4 mt-2 rounded-xl font-bold text-white bg-gradient-to-r from-cc-primary to-[#ff8c7a] hover:brightness-105 transition-all shadow-md flex justify-center items-center h-14"
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setStep("EMAIL")}
+              className="mt-1 text-sm text-gray-500 font-medium hover:text-cc-primary transition-colors py-2"
+              disabled={isLoading}
+            >
+              Log in with a secure email code instead
             </button>
           </form>
         )}
