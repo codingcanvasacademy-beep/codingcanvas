@@ -34,6 +34,11 @@
 - Critical blocker: Public nav shows admin portal link; homepage lacks trust-building sections
 - AI proxy uses mock fallback when GOOGLE_AI_API_KEY is invalid
 
+## Accumulated Context
+
+### Pending Todos
+- [auth] Differentiate student and teacher sign-in (2026-04-11)
+
 ## Next Step
 
 /gsd-plan-phase 4
