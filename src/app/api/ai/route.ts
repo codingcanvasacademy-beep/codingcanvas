@@ -8,8 +8,6 @@ export async function POST(req: NextRequest) {
 
   try {
     // Use gemini-1.5-flash which is powered by Gemma architecture and is free-tier available
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     let systemInstruction = "";
     const userPrompt = prompt;
 
@@ -43,12 +41,16 @@ You must respond with ONLY a valid JSON object (no markdown) in this exact forma
 }`;
     }
 
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: systemInstruction 
+    });
+
     const chat = model.startChat({
       history: (history || []).map((m: { role: string; text: string }) => ({
         role: m.role,
         parts: [{ text: m.text }],
       })),
-      systemInstruction: systemInstruction,
     });
 
     const result = await chat.sendMessage(userPrompt);
