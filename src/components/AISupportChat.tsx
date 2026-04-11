@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 type Message = {
   role: "user" | "model";
@@ -7,7 +8,16 @@ type Message = {
 };
 
 export default function AISupportChat() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Hide support chat on internal portal pages
+  const isInternalPage = pathname?.startsWith('/admin') || 
+                         pathname?.startsWith('/teacher') || 
+                         pathname?.startsWith('/student') ||
+                         pathname?.startsWith('/meeting');
+
+  if (isInternalPage) return null;
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "model",

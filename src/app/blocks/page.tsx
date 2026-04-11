@@ -1,9 +1,11 @@
-"use client";
+import { Metadata } from "next";
+import BlocksWrapper from "./BlocksWrapper";
 
-import dynamic from "next/dynamic";
-
-const BlocksClient = dynamic(() => import("./ClientBlocks"), { ssr: false });
+export const metadata: Metadata = {
+  title: "Blocks Lab | CodingCanvas",
+  description: "Visual Python coding sandbox for kids. Drag, snap, and run real Python code.",
+};
 
 export default function BlocksPage() {
-  return <BlocksClient />;
+  return <BlocksWrapper />;
 }

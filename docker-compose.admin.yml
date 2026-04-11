@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  codingcanvas-admin:
+    image: node:20-alpine
+    container_name: codingcanvas-admin-local
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_IS_ADMIN_ONLY=true
+    command: sh -c "npm install && npm run dev"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

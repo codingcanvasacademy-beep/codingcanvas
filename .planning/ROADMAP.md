@@ -17,7 +17,9 @@
 4. False "5,000+ students" claim is removed from homepage
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 1 to break down)
+- [ ] Navigation Component Cleanup
+- [ ] Hero & Footer Cleanup
+- [ ] Docker Admin Setup
 
 ---
 
@@ -39,7 +41,8 @@ Plans:
 7. Booking form works end-to-end (submission → confirmation → admin dashboard)
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 2 to break down)
+- [x] Homepage Sections Implementation
+- [x] User Acceptance Testing
 
 ---
 
@@ -60,4 +63,22 @@ Plans:
 6. No build errors or console warnings in production
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 3 to break down)
+- [x] TBD (run /gsd-plan-phase 3 to break down)
+
+---
+
+### Phase 4: Launch & Final Deployment
+
+**Goal:** Finalize the production environment, deploy to Vercel, and verify the custom domain.
+**Requirements**: PLAT-06, PLAT-07
+**Depends on:** Phase 3
+**UI hint**: no
+**Plans:** 0 plans
+
+**Success Criteria:**
+1. Site is live on vercel.app or custom domain.
+2. All environment variables are correctly configured in Vercel.
+3. Final smoke test (booking -> admin dashboard) passes in production.
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 4 to break down)

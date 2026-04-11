@@ -10,8 +10,20 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "CodingCanvas — Learn Python, Build Real Projects",
-  description: "CodingCanvas is a premier Python learning platform for kids, featuring visual block coding, live teacher sessions, and real-time code execution.",
+  title: "CodingCanvas — Where Logic Meets Play",
+  description: "The premium Python coding platform for kids. Transform from block-builders to real-world programmers through tactile play and professional mentorship.",
+  openGraph: {
+    title: "CodingCanvas — Where Logic Meets Play",
+    description: "Premium Python coding platform for kids. Transform from block-builders to real-world programmers.",
+    images: ["/og-image.png"],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CodingCanvas — Where Logic Meets Play",
+    description: "Premium Python coding platform for kids.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({

@@ -39,20 +39,19 @@ Every design and feature decision must serve this one goal.
 - ✓ Free class booking form → Supabase → admin dashboard
 - ✓ Supabase auth (email/password login)
 - ✓ "Book Free Class" CTA functional in hero + CTA sections
+- ✓ Navigation — removed "Main Host Portal (Admin)" and "Log In" links (Phase 1)
+- ✓ Homepage — removed false social proof "5,000+ students" (Phase 1)
+- ✓ Footer — fixed broken links & added WhatsApp contact (Phase 1)
+- ✓ Isolated Admin Environment — Docker setup with automatic redirect (Phase 1)
 
 ### Active (Must Build for Launch)
-- [ ] Homepage hero section — fix positioning, remove false social proof ("5000+ students")
-- [ ] Navigation — remove "Main Host Portal (Admin)" link from public nav; add proper nav links (Curriculum, Pricing, About)
 - [ ] "How It Works" section — 3-step process for parents
 - [ ] Curriculum section — what kids actually learn, skill progression
 - [ ] Pricing section — ₹2,000 / 8 classes, free first class CTA
 - [ ] Testimonials section — parent/student reviews (start with 1–2 real ones or placeholder)
 - [ ] Meet the Teachers section — credibility builder
-- [ ] WhatsApp contact button — sticky or in footer/contact
-- [ ] Proper footer — links to Curriculum, Privacy, Contact, Teachers login (not Admin)
-- [ ] Custom domain setup — .com or .in via Hostinger, pointed to Vercel
-- [ ] Fix false/placeholder content — remove "5,000+ young innovators" claim
 - [ ] SEO basics — title tags, meta descriptions, og:image for each page
+- [ ] Custom domain setup — .com or .in via Hostinger, pointed to Vercel
 
 ### Out of Scope (This Milestone)
 - Blog / content marketing — too early
