@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
+import AISupportChat from "@/components/AISupportChat";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -9,8 +10,8 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "CodingCanvas",
-  description: "Learn Python through interactive, visual coding.",
+  title: "CodingCanvas — Learn Python, Build Real Projects",
+  description: "CodingCanvas is a premier Python learning platform for kids, featuring visual block coding, live teacher sessions, and real-time code execution.",
 };
 
 export default function RootLayout({
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans bg-cc-surface text-foreground">
         <Navigation />
         <main className="flex-1 flex flex-col">{children}</main>
+        <AISupportChat />
       </body>
     </html>
   );
