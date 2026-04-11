@@ -61,7 +61,7 @@ export default function LoginPage() {
   const redirectUserBasedOnRole = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      router.push("/blocks");
+      window.location.href = "/blocks";
       return;
     }
     const { data: profile } = await supabase
@@ -71,11 +71,11 @@ export default function LoginPage() {
       .single();
 
     if (profile?.role === 'admin') {
-      router.push("/admin");
+      window.location.href = "/admin";
     } else if (profile?.role === 'teacher') {
-      router.push("/teacher");
+      window.location.href = "/teacher";
     } else {
-      router.push("/blocks"); // or student portal
+      window.location.href = "/blocks"; // or student portal
     }
   };
 
