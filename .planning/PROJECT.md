@@ -4,9 +4,17 @@
 
 CodingCanvas is a live-online Python coding academy for kids, targeting parents of children aged roughly 6–14 years. The platform combines a drag-and-drop Blockly sandbox with real Python compilation, live video classes with teachers, and an AI support chatbot. The business runs on a ₹2,000 / 8-class package model with a free first class to convert discovery traffic into paying students.
 
-**Current state:** 2 paying students. The app runs on Next.js 16 + Supabase + Vercel. A codebase map exists in `.planning/codebase/`. Core technical infrastructure (auth, DB, AI proxy, video meetings, admin portal) works. The public-facing website is incomplete and looks unprofessional to new visitors.
+**Current State (v1.0 Shipped):** The CodingCanvas v1.0 MVP has successfully launched to production on Vercel. We have a professional, trust-building marketing landing page featuring course details, testimonials, a secure free-class booking flow, and integrated AI chat support that dynamically uses FAQ data. The initial administrative links and portals have been secured and isolated from public navigation.
+
+**Next Milestone Goals:** Post-launch priorities will focus on expanding features. This includes differentiating the student and teacher sign-in experiences, creating an optimized dashboard, formalizing the domain mapping (e.g. .com/.in via Hostinger), and potentially introducing payment gateway logic for scale.
+
+<details>
+<summary>Pre-Launch State</summary>
+
+**Current state (Pre-Launch):** 2 paying students. The app runs on Next.js 16 + Supabase + Vercel. A codebase map exists in `.planning/codebase/`. Core technical infrastructure (auth, DB, AI proxy, video meetings, admin portal) works. The public-facing website is incomplete and looks unprofessional to new visitors.
 
 **Launch definition:** A .com or .in domain going live with a polished, trust-building homepage that converts browsing parents into free-trial bookings.
+</details>
 
 ---
 
