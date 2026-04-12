@@ -1,13 +1,60 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
+// Primary AI: Google Gemini (reliable, free-tier available)
+// Secondary AI: Hugging Face Inference API (huggingface mode)
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || "");
+
+// Hugging Face Inference API endpoint
+const HF_API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3";
+
+/**
+ * Calls the Hugging Face Inference API as a fallback/alternative AI provider.
+ * Used when mode === "huggingface" or when HUGGINGFACE_API_KEY is set and Gemini fails.
+ */
+async function callHuggingFace(systemPrompt: string, userPrompt: string): Promise<string> {
+  const hfKey = process.env.HUGGINGFACE_API_KEY;
+  if (!hfKey) throw new Error("HUGGINGFACE_API_KEY not set");
+
+  const response = await fetch(HF_API_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${hfKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      inputs: `<s>[INST] ${systemPrompt}\n\nUser: ${userPrompt} [/INST]`,
+      parameters: { max_new_tokens: 256, temperature: 0.7 },
+    }),
+  });
+
+  if (!response.ok) throw new Error(`HF API error: ${response.status}`);
+  const data = await response.json();
+  // HF returns an array with generated_text
+  const raw: string = Array.isArray(data) ? data[0]?.generated_text || "" : data.generated_text || "";
+  // Strip the instruction prefix echoed back by the model
+  const marker = "[/INST]";
+  const idx = raw.lastIndexOf(marker);
+  return idx !== -1 ? raw.slice(idx + marker.length).trim() : raw.trim();
+}
 
 export async function POST(req: NextRequest) {
   const { mode, prompt, history } = await req.json();
 
+  // ── Hugging Face direct mode ──────────────────────────────────────────────
+  if (mode === "huggingface") {
+    try {
+      const systemPrompt =
+        "You are a friendly AI assistant for CodingCanvas, a Python coding platform for kids. Answer helpfully and concisely.";
+      const answer = await callHuggingFace(systemPrompt, prompt || "");
+      return NextResponse.json({ response: answer });
+    } catch (err) {
+      return NextResponse.json({ error: String(err) }, { status: 503 });
+    }
+  }
+
+  // ── Gemini modes (primary) ────────────────────────────────────────────────
   try {
-    // Use gemini-1.5-flash which is powered by Gemma architecture and is free-tier available
     let systemInstruction = "";
     const userPrompt = prompt;
 
@@ -30,7 +77,9 @@ Example: if teacher says "block that prints a number doubled", respond:
         const supabase = await createClient();
         const { data: faqs } = await supabase.from("ai_faqs").select("question, answer");
         if (faqs && faqs.length > 0) {
-          customFaqsText = "\nHere are custom FAQs provided by the host. Please use these to answer matching user questions exactly:\n" + faqs.map(f => `Q: ${f.question}\nA: ${f.answer}`).join("\n\n");
+          customFaqsText =
+            "\nHere are custom FAQs provided by the host. Please use these to answer matching user questions exactly:\n" +
+            faqs.map((f) => `Q: ${f.question}\nA: ${f.answer}`).join("\n\n");
         }
       } catch (e) {
         console.error("Failed to load FAQs", e);
@@ -53,9 +102,9 @@ You must respond with ONLY a valid JSON object (no markdown) in this exact forma
 }`;
     }
 
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
-      systemInstruction: systemInstruction 
+      systemInstruction: systemInstruction,
     });
 
     const chat = model.startChat({
@@ -71,21 +120,29 @@ You must respond with ONLY a valid JSON object (no markdown) in this exact forma
     return NextResponse.json({ response: responseText });
   } catch (error) {
     console.error("AI API error:", error);
-    
+
     // Fallback Mock Responses for Demo Environment when API Key is invalid
-    if (String(error).includes("API_KEY_INVALID") || process.env.GOOGLE_AI_API_KEY?.startsWith("AIzaSyAV") || !process.env.GOOGLE_AI_API_KEY) {
+    if (
+      String(error).includes("API_KEY_INVALID") ||
+      process.env.GOOGLE_AI_API_KEY?.startsWith("AIzaSyAV") ||
+      !process.env.GOOGLE_AI_API_KEY
+    ) {
       if (mode === "support_chat") {
-         return NextResponse.json({ response: "For demo purposes: Python classes start at just $15/session, and the first entire month is free! Let us know if you need help setting up." });
+        return NextResponse.json({
+          response:
+            "For demo purposes: Python classes start at just $15/session, and the first entire month is free! Let us know if you need help setting up.",
+        });
       } else if (mode === "password_judge") {
-         return NextResponse.json({ response: '{"strength": "MEDIUM", "feedback": "Nice try, but add a symbol or number!"}' });
+        return NextResponse.json({
+          response: '{"strength": "MEDIUM", "feedback": "Nice try, but add a symbol or number!"}',
+        });
       } else if (mode === "block_generator") {
-         return NextResponse.json({ response: '{"label": "Mock Print", "type": "print", "defaultVal": "Hello", "pythonCode": "print({val})"}' });
+        return NextResponse.json({
+          response: '{"label": "Mock Print", "type": "print", "defaultVal": "Hello", "pythonCode": "print({val})"}',
+        });
       }
     }
 
-    return NextResponse.json(
-      { error: "AI service unavailable. Please try again." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "AI service unavailable. Please try again." }, { status: 500 });
   }
 }

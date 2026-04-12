@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Blocks, Terminal, Users, CheckCircle, ArrowRight } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
+
 import HowItWorks from "@/components/HowItWorks";
 import Curriculum from "@/components/Curriculum";
 import Pricing from "@/components/Pricing";
@@ -24,27 +24,29 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const supabase = createClient();
+
 
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || !parentName || !childName || !email) return;
 
     setIsSubmitting(true);
-    
-    const { error } = await supabase.from("free_class_requests").insert([{
-      parent_name: parentName,
-      child_name: childName,
-      email: email,
-      phone: phone,
-      status: "pending"
-    }]);
 
-    setIsSubmitting(false);
+    try {
+      // Route through server API: saves to Supabase + notifies n8n (Gmail)
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          parent_name: parentName,
+          child_name: childName,
+          email,
+          phone,
+        }),
+      });
 
-    if (error) {
-      alert("Something went wrong! Please try again.");
-    } else {
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+
       setIsSuccess(true);
       setTimeout(() => {
         setShowModal(false);
@@ -54,6 +56,11 @@ export default function Home() {
         setChildName("");
         setEmail("");
       }, 3000);
+    } catch (err) {
+      console.error("Booking error:", err);
+      alert("Something went wrong! Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
