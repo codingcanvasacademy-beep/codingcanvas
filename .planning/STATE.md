@@ -25,6 +25,7 @@ progress:
 ### Pending Todos
 
 - [auth] Differentiate student and teacher sign-in (2026-04-11)
+- [auth] Remember Coding123 password (2026-04-13)
 
 ### Roadmap Evolution
 
