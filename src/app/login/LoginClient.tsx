@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { GraduationCap, Users, ShieldCheck } from "lucide-react";
@@ -7,7 +8,7 @@ import { createClient } from "@/utils/supabase/client";
 
 type Role = "student" | "teacher" | "admin";
 
-const ROLES: { id: Role; label: string; icon: React.ReactNode; hint: string }[] = [
+const ROLES: { id: Role; label: string; icon: ReactNode; hint: string }[] = [
   { id: "student", label: "Student", icon: <GraduationCap className="w-5 h-5" />, hint: "Jump into your coding lab and live classes." },
   { id: "teacher", label: "Teacher", icon: <Users className="w-5 h-5" />, hint: "Manage your classroom, students and assignments." },
   { id: "admin", label: "Admin", icon: <ShieldCheck className="w-5 h-5" />, hint: "Main account — manage the whole website." },

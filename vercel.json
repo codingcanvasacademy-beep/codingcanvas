@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/automation/openclaw",
-      "schedule": "*/10 * * * *"
+      "schedule": "30 3 * * *"
     }
   ]
 }
