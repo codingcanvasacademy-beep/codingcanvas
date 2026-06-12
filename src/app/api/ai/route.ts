@@ -41,6 +41,28 @@ async function callHuggingFace(systemPrompt: string, userPrompt: string): Promis
 export async function POST(req: NextRequest) {
   const { mode, prompt, history } = await req.json();
 
+  // ── Support chat via the dedicated HF Spaces chatbot (when deployed) ──────
+  // Falls through to Gemini below if the Space is unreachable.
+  if (mode === "support_chat" && process.env.HF_CHATBOT_URL) {
+    try {
+      const res = await fetch(`${process.env.HF_CHATBOT_URL}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: prompt, history: history || [] }),
+        signal: AbortSignal.timeout(20000),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.response) {
+          return NextResponse.json({ response: data.response });
+        }
+      }
+      console.error("[AI] HF chatbot Space returned:", res.status);
+    } catch (err) {
+      console.error("[AI] HF chatbot Space unreachable, falling back to Gemini:", err);
+    }
+  }
+
   // ── Hugging Face direct mode ──────────────────────────────────────────────
   if (mode === "huggingface") {
     try {

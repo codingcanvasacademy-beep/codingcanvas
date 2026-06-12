@@ -11,6 +11,7 @@ FROM python:3.10-slim
 #   libsdl2-dev   — SDL2 for pygame
 #   ghostscript   — EPS-to-PNG conversion for turtle screenshots
 #   fonts-dejavu  — Readable fonts for matplotlib plots
+#   ffmpeg/cairo/pango/build-essential — required to build and run manim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     xvfb \
     x11-utils \
@@ -21,6 +22,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsdl2-ttf-dev \
     ghostscript \
     fonts-dejavu \
+    ffmpeg \
+    build-essential \
+    pkg-config \
+    libcairo2-dev \
+    libpango1.0-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user (security best practice for HF Spaces)

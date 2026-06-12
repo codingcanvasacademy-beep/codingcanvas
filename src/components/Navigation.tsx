@@ -31,6 +31,9 @@ export default function Navigation() {
       </div>
 
       <div className="flex gap-4 items-center">
+        <Link href="/login" className="px-6 py-3 rounded-full font-bold text-cc-primary border-2 border-cc-primary/20 hover:border-cc-primary hover:bg-cc-primary-light transition-all text-sm md:text-base text-center inline-block">
+          Sign In
+        </Link>
         <Link href="/#book" className="px-6 py-3 rounded-full font-bold text-white bg-cc-primary hover:bg-cc-primary/90 shadow-lg shadow-cc-primary/20 transition-all text-sm md:text-base text-center inline-block">
           Book Free Class
         </Link>

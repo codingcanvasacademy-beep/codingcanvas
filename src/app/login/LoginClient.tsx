@@ -1,9 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { GraduationCap, Users, ShieldCheck } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
+type Role = "student" | "teacher" | "admin";
+
+const ROLES: { id: Role; label: string; icon: React.ReactNode; hint: string }[] = [
+  { id: "student", label: "Student", icon: <GraduationCap className="w-5 h-5" />, hint: "Jump into your coding lab and live classes." },
+  { id: "teacher", label: "Teacher", icon: <Users className="w-5 h-5" />, hint: "Manage your classroom, students and assignments." },
+  { id: "admin", label: "Admin", icon: <ShieldCheck className="w-5 h-5" />, hint: "Main account — manage the whole website." },
+];
+
 export default function LoginPage() {
+  const [role, setRole] = useState<Role>("student");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
@@ -61,7 +72,7 @@ export default function LoginPage() {
   const redirectUserBasedOnRole = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      window.location.href = "/blocks";
+      window.location.href = "/student";
       return;
     }
     const { data: profile } = await supabase
@@ -70,12 +81,14 @@ export default function LoginPage() {
       .eq('id', user.id)
       .single();
 
+    // The actual role on the profile always wins — the tab selection is
+    // just a hint, so a student can't reach /admin by picking the Admin tab.
     if (profile?.role === 'admin') {
       window.location.href = "/admin";
     } else if (profile?.role === 'teacher') {
       window.location.href = "/teacher";
     } else {
-      window.location.href = "/blocks"; // or student portal
+      window.location.href = "/student";
     }
   };
 
@@ -178,24 +191,48 @@ export default function LoginPage() {
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-cc-tertiary-container rounded-full opacity-20 blur-3xl"></div>
       
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 p-8 relative z-10 flex flex-col items-center">
-        <div className="w-24 h-24 mb-6 relative flex items-center justify-center">
-             <div className="w-full h-full rounded-full border-4 border-cc-primary flex items-center justify-center text-4xl font-extrabold text-cc-primary bg-cc-primary-container">
-               C
-             </div>
+        <div className="flex items-center gap-3 mb-6">
+          <Image src="/logo.png" alt="CodingCanvas Logo" width={48} height={48} className="rounded-xl" />
+          <span className="font-black text-2xl tracking-tighter text-foreground">CodingCanvas</span>
         </div>
 
         <h1 className="text-3xl font-bold text-cc-secondary mb-2">
           {step === "PASSWORD_SETUP" ? "Set A Password" : "Welcome Back!"}
         </h1>
         <p className="text-gray-500 mb-6 text-center text-sm">
-          {step === "EMAIL" 
-            ? "Enter your email address to receive a secure One-Time code." 
-            : step === "OTP" 
+          {step === "EMAIL"
+            ? "Enter your email address to receive a secure One-Time code."
+            : step === "OTP"
             ? `We've sent a code to ${email}`
             : step === "PASSWORD_LOGIN"
             ? "Welcome back! Please enter your password to sign in."
             : "Lock it down! Optionally set a password to make logging in easier next time."}
         </p>
+
+        {(step === "EMAIL" || step === "PASSWORD_LOGIN") && (
+          <div className="w-full mb-6">
+            <div className="grid grid-cols-3 gap-2 p-1.5 bg-gray-50 rounded-2xl border border-gray-100">
+              {ROLES.map((r) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => setRole(r.id)}
+                  className={`flex flex-col items-center gap-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                    role === r.id
+                      ? "bg-white text-cc-primary shadow-sm border border-cc-primary/20"
+                      : "text-gray-400 hover:text-gray-600"
+                  }`}
+                >
+                  {r.icon}
+                  {r.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-400 text-center mt-2 font-medium">
+              {ROLES.find((r) => r.id === role)?.hint}
+            </p>
+          </div>
+        )}
 
         {errorMsg && (
           <div className="w-full p-3 mb-4 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm font-medium text-center">
@@ -213,7 +250,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="teacher@codingcanvas.com"
+                placeholder={`${role}@codingcanvas.com`}
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cc-primary focus:outline-none transition-colors"
                 disabled={isLoading}
               />
@@ -251,7 +288,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="teacher@codingcanvas.com"
+                placeholder={`${role}@codingcanvas.com`}
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-cc-primary focus:outline-none transition-colors"
                 disabled={isLoading}
               />

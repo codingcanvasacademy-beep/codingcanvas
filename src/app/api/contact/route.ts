@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { sendTelegramMessage } from "@/utils/automation/telegram";
 
 /**
  * POST /api/contact
  *
  * Handles "Book a Free Class" form submissions:
  * 1. Saves the lead to Supabase (free_class_requests table)
- * 2. Forwards booking details to n8n webhook for Gmail notification
+ * 2. Sends an instant Telegram alert to the owner's chat
+ * 3. Forwards booking details to n8n webhook for Gmail notification
  *
  * n8n workflow responsibilities:
  *   - Send confirmation email to the parent via Gmail
@@ -57,7 +59,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not save your request." }, { status: 500 });
   }
 
-  // ── Step 2: Forward to n8n for Gmail notification ─────────────────────────
+  // ── Step 2: Instant Telegram alert to the owner ───────────────────────────
+  // Non-blocking: a Telegram failure must never fail the booking itself.
+  try {
+    const tg = await sendTelegramMessage(
+      `🎉 <b>New Free Class Request!</b>\n\n` +
+        `👤 Parent: <b>${parent_name}</b>\n` +
+        `🧒 Child: <b>${child_name}</b>\n` +
+        `📧 Email: ${email}\n` +
+        `📱 Phone: +91 ${phone}\n\n` +
+        `⏰ ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST\n` +
+        `Reach out within 24 hours to schedule the trial class!`
+    );
+    if (!tg.success) {
+      console.error("[Contact] Telegram notification failed:", tg.error);
+    }
+  } catch (err) {
+    console.error("[Contact] Telegram notification error:", err);
+  }
+
+  // ── Step 3: Forward to n8n for Gmail notification ─────────────────────────
   const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
 
   if (N8N_WEBHOOK_URL) {

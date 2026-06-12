@@ -14,6 +14,7 @@ export default function StudentCompiler() {
   const [code, setCode] = useState(DEFAULT_CODE);
   const [output, setOutput] = useState("");
   const [outputImage, setOutputImage] = useState<string | null>(null);
+  const [outputVideo, setOutputVideo] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "unsaved">("saved");
   const [error, setError] = useState(false);
@@ -97,6 +98,7 @@ export default function StudentCompiler() {
     setIsRunning(true);
     setOutput("");
     setOutputImage(null);
+    setOutputVideo(null);
     setError(false);
 
     const hfSpaceUrl = process.env.NEXT_PUBLIC_HF_SPACE_URL;
@@ -132,6 +134,9 @@ export default function StudentCompiler() {
       );
       if (result.image) {
         setOutputImage(result.image);
+      }
+      if (result.video) {
+        setOutputVideo(result.video);
       }
 
       // Send telemetry to n8n for student progress tracking
@@ -234,7 +239,7 @@ export default function StudentCompiler() {
             >
               {output || "> _"}
             </div>
-            {/* Visual output (matplotlib / turtle images) */}
+            {/* Visual output (matplotlib / turtle / pygame images) */}
             {outputImage && (
               <div className="p-3 border-t border-[#e3beb8]/20">
                 <p className="text-xs text-gray-400 mb-1">Visual Output</p>
@@ -242,6 +247,20 @@ export default function StudentCompiler() {
                 <img
                   src={`data:image/png;base64,${outputImage}`}
                   alt="Code visual output"
+                  className="rounded-xl w-full object-contain"
+                />
+              </div>
+            )}
+            {/* Animation output (manim videos) */}
+            {outputVideo && (
+              <div className="p-3 border-t border-[#e3beb8]/20">
+                <p className="text-xs text-gray-400 mb-1">Animation Output</p>
+                <video
+                  src={`data:video/mp4;base64,${outputVideo}`}
+                  controls
+                  autoPlay
+                  loop
+                  muted
                   className="rounded-xl w-full object-contain"
                 />
               </div>

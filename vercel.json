@@ -1,3 +1,9 @@
 {
-  "name": "codingcanvas"
+  "name": "codingcanvas",
+  "crons": [
+    {
+      "path": "/api/automation/openclaw",
+      "schedule": "*/10 * * * *"
+    }
+  ]
 }
